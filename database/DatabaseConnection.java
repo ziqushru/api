@@ -1,4 +1,4 @@
-package database;
+package api.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,13 +8,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.TCPData;
+import api.server.TCPData;
 
 public class DatabaseConnection
 {
 	private String 		connectionUrl;
 	private Connection 	con;
-	private TCPData tcp_data;
+	private TCPData 	tcp_data;
 	
 	public DatabaseConnection(String database_ip, String databaseName)
 	{
@@ -43,8 +43,6 @@ public class DatabaseConnection
 		}
         
 		tcp_data = new TCPData(true);
-        
-		loadDatabase();
 	}
 	
 	public TCPData getRecentData()
@@ -102,6 +100,7 @@ public class DatabaseConnection
             while (rs.next())
             {
             	Row row = new Row();
+//            	
             	row.setID(rs.getLong("id"));
             	row.setImei(rs.getLong("imei"));
             	row.setFuel_level(rs.getShort("fuel_levels0"));

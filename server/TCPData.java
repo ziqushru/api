@@ -1,10 +1,10 @@
-package server;
+package api.server;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Row;
+import api.database.Row;
 
 public class TCPData
 {
@@ -57,6 +57,34 @@ public class TCPData
 	public TCPData getRecentData()
 	{
 		List<Row> list = new ArrayList<Row>();
+		List<Row> temp_list = new ArrayList<Row>();
+		long imei;
+		
+		for (int i = 1; i <= vehicles.size(); i++)
+		{
+			imei = vehicles.get(i - 1).getImei();
+			temp_list.add(vehicles.get(i - 1));
+			
+			if (i == vehicles.size())
+			{
+				list.add(getRecentRow(temp_list));
+				temp_list.clear();
+				break;
+			}
+			
+			if (imei != vehicles.get(i).getImei())
+			{
+				list.add(getRecentRow(temp_list));
+				temp_list.clear();
+			}
+		}
+		setVehicles(list);
+		return this;
+	}
+	
+	public TCPData getRecentData2()
+	{
+		List<Row> list = new ArrayList<Row>();
 		
 		long imei = vehicles.get(0).getImei();
 		int imei_counter = 1;
@@ -105,9 +133,11 @@ public class TCPData
 	
 	public void setVehicles(List<Row> data)
 	{
-		if (hasData(data))
+		vehicles.clear();
+		
+		for (int i = 0; i < data.size(); i++)
 		{
-			this.vehicles = data;
+			vehicles.add(data.get(i));
 		}
 	}
 	
