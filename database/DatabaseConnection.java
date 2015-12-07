@@ -124,8 +124,13 @@ public class DatabaseConnection
         }
 	}
 	
-	public TCPData getData()
+	public TCPData getTCPData()
 	{
 		return tcp_data;
 	}
+	
+	public List<Row> getData()
+	{
+		return tcp_data.getVehicles();
+	}	
 }
