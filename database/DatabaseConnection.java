@@ -50,42 +50,6 @@ public class DatabaseConnection
 		return tcp_data.getRecentData();
 	}
 	
-	public String showDatabase()
-	{
-		return showDatabase(tcp_data.getVehicles());
-	}
-	
-	public String showDatabase(List<Row> data)
-	{	
-		String result = "";
-		
-		result += " ~ DATABASE ~ " + '\n';		
-		for (int i = 0; i < data.size(); i++)
-			result += data.get(i).toString() + '\n';
-		result += "  ~  END  ~  " + '\n';
-		
-		return result;
-	}
-	
-	public void loadDatabase() {
-		selectQuery("SELECT * FROM telemetry");
-	}
-	
-
-	public void executeQuery(String query)
-	{
-		if (query == null || con == null)
-			return;
-
-		Statement stmt;
-		try
-		{
-			stmt = con.createStatement();
-			stmt.executeQuery(query);
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-	}
-	
 	public List<Row> selectQuery(String query)
 	{
 		if (query == null || con == null)
@@ -99,8 +63,7 @@ public class DatabaseConnection
             
             while (rs.next())
             {
-            	Row row = new Row();
-//            	
+            	Row row = new Row();            	
             	row.setID(rs.getLong("id"));
             	row.setImei(rs.getLong("imei"));
             	row.setFuel_level(rs.getShort("fuel_levels0"));

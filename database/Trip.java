@@ -1,55 +1,53 @@
 package api.database;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 
 public class Trip
 {
-	private int id;
+	private long id;
 	private long imei;
-	private List<Row> data;
+	private int status;
+	private int average_speed;
+	private int max_speed;
+	private Timestamp start_time;
+	private Timestamp end_time;
 	
-	public Trip()
+	public Trip(long id, long imei, Timestamp time)
 	{
-		data = new ArrayList<Row>();
+		this.id = id;
+		this.imei = imei;
+		this.average_speed = 0;
+		this.max_speed = 0;
+		this.status = 1;
+		this.start_time = time;
+	}
+	
+	public void setStatus(boolean status)
+	{
+		if (status)
+			this.status = 1;
+		else
+			this.status = 0;
+	}
+	
+	public void setAverageSpeed(int average_speed)
+	{
+		this.average_speed = average_speed;
 	}
 
-	public void start()
+	public void setMaximumSpeed(int max_speed)
 	{
-		if (data == null)
-		{
-			data = new ArrayList<Row>();
-		}
-		else if (data.size() > 0)
-		{
-			data.clear();
-		}
+		this.max_speed = max_speed;
 	}
 	
-	public void addRow(Row row)
+	public void setStartTime(Timestamp time)
 	{
-		if (row != null)
-			data.add(row);
+		this.start_time = time;
 	}
 	
-	public Trip stop()
+	public void setEndTime(Timestamp time)
 	{
-		return this;
-	}
-	
-	public void setImei(long imei)
-	{
-		this.imei = imei;
-	}
-	
-	public int getID()
-	{
-		return id;
-	}
-	
-	public long getImei()
-	{
-		return imei;
+		this.end_time = time;
 	}
 	
 }

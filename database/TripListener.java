@@ -1,5 +1,6 @@
 package api.database;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,21 +22,85 @@ public class TripListener implements Runnable
 		thread.start();
 	}
 	
-	private void getTrips(List<Row> data)
+	private List<Row> sortByTime(List<Row> data)
 	{
+		int j;
+		for (int i = 1; i < data.size(); i++)
+		{
+			j = i;
+			
+			while (j > 0 && data.get(j).getTime().getTime() < data.get(j - 1).getTime().getTime())
+			{
+				Row temp_row = data.get(j);
+				
+				data.remove(j);
+				data.add(j - 1, temp_row);
+				
+				j--;
+			}
+		}
+		return data;
+	}
+	
+	private void createTrips(List<Row> data)
+	{
+		data = sortByTime(data);
+		Row row;
+		boolean end = false;
+		int points_length = 0;
+		short max_speed = 0;
+		short sum_speed = 0;
+		Timestamp time = null;
+		Trip trip = null;
+		
 		for (int i = 0; i < data.size(); i++)
 		{
-			Trip trip = new Trip();
-			trip.start();
+			row = data.get(i);
+			if (row.getDigital_inputs() > 160)
+			{
+				time = row.getTime();
+				if (trip == null)
+				{
+					trip = new Trip(trips.size() + 1, row.getImei(), time);
+					points_length = 1;
+					max_speed = row.getSpeed();
+					sum_speed = row.getSpeed();
+					continue;
+				}
+				points_length++;
+				
+				if (row.getSpeed() > max_speed)
+					max_speed = row.getSpeed();
+				
+				sum_speed += row.getSpeed();
+				
+				end = i == data.size() - 1;
+			}
+			else if (row.getTime().getTime() - time.getTime() > 20000L)
+			{				
+				end = true;
+			}
 			
-			
+			if (end)
+			{
+				if (points_length > 0 && trip != null)
+				{
+					trip.setAverageSpeed(sum_speed / points_length);
+					trip.setMaximumSpeed(max_speed);
+					trip.setStatus(i == data.size() - 1);
+					trip.setEndTime(time);
+					trips.add(trip);
+					trip = null;
+				}
+				end = false;
+			}
 		}
 	}
-
+	
 	@Override
 	public void run()
 	{
-		String query = 			"SELECT * FROM telemetry ORDER BY imei";
+		String query = 			"SELECT * FROM telemetry_copy ORDER BY imei";
 		database_connection.selectQuery(query);
 		List<Row> data = 		database_connection.getData();
 		List<Row> temp_list =	new ArrayList<Row>();
@@ -48,49 +113,21 @@ public class TripListener implements Runnable
 			
 			if (i == data.size())
 			{
-				getTrips(temp_list);
+				createTrips(temp_list);
 				temp_list.clear();
 				break;
 			}
 			
 			if (imei != data.get(i).getImei())
 			{
-				getTrips(temp_list);
+				createTrips(temp_list);
 				temp_list.clear();
 			}
 		}
-		
-		
-		// RUNNING - CYKA
-		while (true)
-		{
-			query = "SELECT * FROM telemetry ORDER BY imei";
-			database_connection.selectQuery(query);
-			database_connection.getRecentData();
-			data = database_connection.getData();
-			
-			
-			for (int i = 0; i < data.size(); i++)
-			{
-				if (data.get(i).getDigital_inputs() == 128)
-				{
-					
-				}
-				else if (data.get(i).getDigital_inputs() == 129)
-				{
-					
-				}
-				
-			}
-			
-			
-			try
-			{
-				Thread.sleep(1500);
-			}
-			catch (InterruptedException e) { e.printStackTrace(); }
-		}
-		
 	}
 
+	public List<Trip> getTrips()
+	{
+		return trips;
+	}
 }
