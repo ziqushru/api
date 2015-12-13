@@ -1,6 +1,8 @@
 package api.database;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Trip
 {
@@ -11,6 +13,7 @@ public class Trip
 	private int max_speed;
 	private Timestamp start_time;
 	private Timestamp end_time;
+	private List<Row> trip_points;
 	
 	public Trip(long id, long imei, Timestamp time)
 	{
@@ -20,6 +23,7 @@ public class Trip
 		this.max_speed = 0;
 		this.status = 1;
 		this.start_time = time;
+		this.trip_points = new ArrayList<Row>();
 	}
 	
 	public void setStatus(boolean status)
@@ -50,4 +54,8 @@ public class Trip
 		this.end_time = time;
 	}
 	
+	public void addTripPoint(Row row)
+	{
+		trip_points.add(row);
+	}
 }

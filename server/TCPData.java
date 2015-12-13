@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import api.database.Row;
+import api.database.Trip;
 
 public class TCPData
 {
 	private boolean success;
 	private List<String> errors;
 	private List<Row> vehicles;
+	private List<Trip> trips;
 	
 	public TCPData()
 	{}
@@ -20,6 +22,7 @@ public class TCPData
 		this.success = success;
 		this.errors = new ArrayList<String>();
 		this.vehicles = new ArrayList<Row>();
+		this.trips = new ArrayList<Trip>();
 	}
 	
 	public void toggleSuccess()
