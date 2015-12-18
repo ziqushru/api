@@ -6,22 +6,22 @@ import java.util.List;
 
 public class TripListener implements Runnable
 {
-	private DatabaseConnection 	database_connection;
-	private List<Trip> 			trips;
-	private Thread 				thread;
-	
+	private DatabaseConnection	database_connection;
+	private List<Trip>			trips;
+	private Thread				thread;
+
 	public TripListener(String database_ip, String databaseName, String user, String password)
 	{
-		this.database_connection = 	new DatabaseConnection(database_ip, databaseName, user, password);
-		this.trips = 				new ArrayList<Trip>();
-		this.thread = 				new Thread(this, "api - trip thread");
+		this.database_connection = new DatabaseConnection(database_ip, databaseName, user, password);
+		this.trips = new ArrayList<Trip>();
+		this.thread = new Thread(this, "api - trips thread");
 	}
-	
+
 	public void start()
 	{
 		thread.start();
 	}
-	
+
 	private List<Row> sortByTime(List<Row> data)
 	{
 		int j;
@@ -44,7 +44,7 @@ public class TripListener implements Runnable
 	{
 		String past_string = past.toString();
 		String recent_string = recent.toString();
-		
+
 		// 2015-12-09 07:55:16
 		// CHECK YEAR
 		int past_offset = 0;
@@ -109,14 +109,16 @@ public class TripListener implements Runnable
 		String recent_minutes_string = "";
 		for (int i = 0; i < 2; i++)
 		{
-				if (past_string.charAt(past_offset) != ':');
-					past_minutes_string += past_string.charAt(past_offset++);
-				if (recent_string.charAt(recent_offset) != ':');
-					recent_minutes_string += recent_string.charAt(recent_offset++);
+			if (past_string.charAt(past_offset) != ':')
+				;
+			past_minutes_string += past_string.charAt(past_offset++);
+			if (recent_string.charAt(recent_offset) != ':')
+				;
+			recent_minutes_string += recent_string.charAt(recent_offset++);
 		}
 		int past_minutes = Integer.parseInt(past_minutes_string);
 		int recent_minutes = Integer.parseInt(recent_minutes_string);
-		
+
 		// CALCULATE DIFFERENCE IN MINUTES
 		int difference = recent_minutes - past_minutes;
 		return difference;
@@ -127,7 +129,7 @@ public class TripListener implements Runnable
 	{
 		String past_string = past.toString();
 		String recent_string = recent.toString();
-		
+
 		// Dec 9, 2015 7:19:22 AM
 		// CHECK MONTH
 		int past_offset = 0;
@@ -197,12 +199,12 @@ public class TripListener implements Runnable
 		recent_minutes_string += recent_string.charAt(recent_offset++);
 		recent_minutes_string += recent_string.charAt(recent_offset++);
 		int recent_minutes = Integer.parseInt(recent_minutes_string);
-		
+
 		// CALCULATE DIFFERENCE IN MINUTES
 		int difference = recent_minutes - past_minutes;
 		return difference;
 	}
-	
+
 	private void createTrips(List<Row> data)
 	{
 		data = sortByTime(data);
@@ -213,7 +215,7 @@ public class TripListener implements Runnable
 		short sum_speed = 0;
 		Timestamp time = null;
 		Trip trip = null;
-		
+
 		for (int i = 0; i < data.size(); i++)
 		{
 			row = data.get(i);
@@ -233,14 +235,13 @@ public class TripListener implements Runnable
 				if (row.getSpeed() > max_speed)
 					max_speed = row.getSpeed();
 				sum_speed += row.getSpeed();
-				
+
 				trip.addTripPoint(row);
-				
+
 				end = i == data.size() - 1;
-			}
-			else
+			} else
 				end = true;
-			
+
 			if (end)
 			{
 				if (points_length > 0 && trip != null)
@@ -256,28 +257,27 @@ public class TripListener implements Runnable
 			}
 		}
 	}
-	
+
 	@Override
 	public void run()
 	{
-		String query = 			"SELECT * FROM telemetry_copy ORDER BY imei";
-		database_connection.selectQuery(query);
-		List<Row> data = 		database_connection.getData();
-		List<Row> temp_list =	new ArrayList<Row>();
+		String query = "SELECT * FROM telemetry_copy ORDER BY imei";
+		List<Row> data = database_connection.selectQuery(query);
+		List<Row> temp_list = new ArrayList<Row>();
 		long imei;
-		
+
 		for (int i = 1; i <= data.size(); i++)
 		{
 			imei = data.get(i - 1).getImei();
 			temp_list.add(data.get(i - 1));
-			
+
 			if (i == data.size())
 			{
 				createTrips(temp_list);
 				temp_list.clear();
 				break;
 			}
-			
+
 			if (imei != data.get(i).getImei())
 			{
 				createTrips(temp_list);

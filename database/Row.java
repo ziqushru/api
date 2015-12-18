@@ -4,26 +4,33 @@ import java.sql.Timestamp;
 
 public class Row
 {
-	private long id;
-	private long imei;
-	private short fuel_level;
-	private int analog_inputs1;
-	private int digital_inputs;
-	private float longitude;
-	private float latitude;
-	private short speed;
-	private float odometer;
-	private short prev_digital_inputs;
-	private Timestamp time;
-	
+	private long		id;
+	private long		trip_id;
+	private long		imei;
+	private short		fuel_level;
+	private int			analog_inputs1;
+	private int			digital_inputs;
+	private float		longitude;
+	private float		latitude;
+	private short		speed;
+	private float		odometer;
+	private short		prev_digital_inputs;
+	private Timestamp	time;
+
 	// Represent Data in Row
 	public Row()
-	{}
-	
+	{
+	}
+
 	// Getters
 	public long getID()
 	{
 		return id;
+	}
+
+	public long getTripID()
+	{
+		return trip_id;
 	}
 
 	public long getImei()
@@ -75,11 +82,16 @@ public class Row
 	{
 		return time;
 	}
-	
+
 	// Setters
 	public void setID(long id)
 	{
 		this.id = id;
+	}
+
+	public void setTripID(long trip_id)
+	{
+		this.trip_id = trip_id;
 	}
 
 	public void setImei(long imei)
@@ -135,11 +147,9 @@ public class Row
 	@Override
 	public String toString()
 	{
-		return "Data [id=" + id + ", imei=" + imei + ", fuel_level="
-				+ fuel_level + ", analog_inputs1=" + analog_inputs1
-				+ ", digital_inputs=" + digital_inputs + ", longitude="
-				+ longitude + ", latitude=" + latitude + ", speed=" + speed
-				+ ", odometer=" + odometer + ", prev_digital_inputs="
-				+ prev_digital_inputs + ", time=" + time + "]";
+		return "Data [id=" + id + ", trip_id=" + trip_id + " , imei=" + imei + ", fuel_level=" + fuel_level + ", analog_inputs1=" + analog_inputs1
+				+ ", digital_inputs=" + digital_inputs + ", longitude=" + longitude + ", latitude=" + latitude
+				+ ", speed=" + speed + ", odometer=" + odometer + ", prev_digital_inputs=" + prev_digital_inputs
+				+ ", time=" + time + "]";
 	}
 }
